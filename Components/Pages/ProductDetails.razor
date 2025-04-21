@@ -1,0 +1,42 @@
+@page "/productdetails/{productId:int}"
+@rendermode InteractiveServer
+@inject ProductServices productService;
+
+@if(product is null)
+{
+    <p>En cours de chargement ...</p>
+}
+else
+{
+   <div class="container">
+     <div class="row">
+         <div class="column">
+             <p class="lead">@product?.Description</p>
+         </div>
+     </div>
+     <div class="row mt-lg-4 bg-light">
+         <div class="column">
+             <ProductReviews Product="@product"/>
+         </div>
+     </div>
+     <div class="row mt-lg-4">
+         <div class="column">
+             <button class="btn btn-primary" data-bs-toggle="modal" 
+             data-bs-target="#reviewModal">Add Review</button>
+         </div>            
+     </div>
+ </div>
+
+ <WriteReview Product="@product"/>  
+}    
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    Product? product;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await productService.GetProductByIdAsync(ProductId);
+    }    
+}

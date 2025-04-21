@@ -1,0 +1,12 @@
+# Ignore les répertoires bin et obj
+bin/
+obj/
+DataStorage
+
+# Autres fichiers ou dossiers générés par .NET
+*.user
+*.suo
+*.pdb
+*.log
+*.vs/
+.vscode/
