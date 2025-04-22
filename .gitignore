@@ -1,7 +1,9 @@
 # Ignore les répertoires bin et obj
 bin/
 obj/
-DataStorage
+Migrations/
+wwwroot/lib/
+DataStorage/
 
 # Autres fichiers ou dossiers générés par .NET
 *.user
@@ -10,3 +12,4 @@ DataStorage
 *.log
 *.vs/
 .vscode/
+AppInfos.txt

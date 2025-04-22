@@ -14,14 +14,16 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
+// var connString = builder.Configuration.GetConnectionString("MyConnection");
+// builder.Services.AddSqlite<MyDbContext>(connString);
+
+var sqlConnection = builder.Configuration["ConnectionStrings:Amen:SqlDb"];
+builder.Services.AddSqlServer<MyDbContext>(sqlConnection, options => options.EnableRetryOnFailure());
 
 
-var connString = builder.Configuration.GetConnectionString("MyConnection");
-
-builder.Services.AddSqlite<MyDbContext>(connString);
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
-Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("MyConnection")}");
-Console.WriteLine($"App Title: {builder.Configuration["MyAppSettings:Title"]}");
+Console.WriteLine($"Connection String: {sqlConnection}");
+
 
 builder.Services.AddTransient<ProductServices>();
 builder.Services.AddTransient<ReviewService>();
