@@ -11,8 +11,13 @@ else
     <div class="pt-3">
         <QuickGrid Items="@Reviews">
             <PropertyColumn Title="" Property="@(r => r.Text)" Sortable="false" />
+            <TemplateColumn>
+                <a href="reviewdetails/@context.Id">@context.Text</a>
+            </TemplateColumn>
         </QuickGrid>
     </div>
+
+
     <div>
         <button class="btn btn-link" @onclick="@GetReviews">(refesh the reviews)</button>
     </div>

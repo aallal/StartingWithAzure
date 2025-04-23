@@ -10,73 +10,65 @@ namespace MyBlazorApp.Data
     {
         public static void InitializeDatabase(MyDbContext context)
         {
-//            context.Database.Migrate();
+            //            context.Database.Migrate();
 
             // Add seed data here if necessary
-            if (! context.Products.Any())
+            if (!context.Products.Any())
             {
- var pickleType = new ProductType { Name = "Pickle" };
- var preserveType = new ProductType { Name = "Preserves" };
+                var CornichonType = new ProductType { Name = "Cornichon" };
+                var ConservesType = new ProductType { Name = "Conserves" };
 
- var dillReview = new Review
- {
-     Date = DateTime.Now,
-     Text = "These pickles pack a punch",
-     UserId = "matt"
- };
+                var CornichonReview = new Review
+                {
+                    Date = DateTime.Now,
+                    Text = "Ces cornichons ont du punch",
+                    UserId = "Amen"
+                };
 
- var dillPickles = new Product
- {
-     Description = "Deliciously dill",
-     Name = "Dill Pickles",
-     ProductType = pickleType,
-     Reviews = new List<Review> { dillReview }
- };
+                var Cornichons = new Product
+                {
+                    Description = "Délicieusement à l'aneth",
+                    Name = "Cornichons à l'aneth",
+                    ProductType = CornichonType,
+                    Reviews = new List<Review> { CornichonReview }
+                };
 
- var dillPickles2 = new Product
- {
-     Description = "Deliciously fromage",
-     Name = "Dill Pickles",
-     ProductType = pickleType,
-     Reviews = new List<Review> { }
- };
 
-var beetReview = new Review
- {
-     Date = DateTime.Now,
-     Text = "Bonafide best beets",
-     UserId = "matt"
- };
+                var betteravesReview = new Review
+                {
+                    Date = DateTime.Now,
+                    Text = "Les meilleures betteraves",
+                    UserId = "Fatima"
+                };
 
- var pickledBeet = new Product
- {
-     Description = "unBeetable",
-     Name = "Red Pickled Beets",
-     ProductType = pickleType,
-     Reviews = new List<Review> { beetReview }
- };
+                var betteraves = new Product
+                {
+                    Description = "unBeetable",
+                    Name = "Betteraves rouges marinées",
+                    ProductType = CornichonType,
+                    Reviews = new List<Review> { betteravesReview }
+                };
 
- var preserveReview = new Review
- {
-     Date = DateTime.Now,
-     Text = "Succulent strawberries making biscuits better",
-     UserId = "matt"
- };
+                var fraisesReview = new Review
+                {
+                    Date = DateTime.Now,
+                    Text = "Des fraises succulentes qui améliorent les biscuits",
+                    UserId = "Iyad"
+                };
 
- var strawberryPreserves = new Product
- {
-     Description = "Sweet and a treat to make your toast the most",
-     Name = "Strawberry Preserves",
-     ProductType = preserveType,
-     Reviews = new List<Review> { preserveReview }
- };
+                var strawberryPreserves = new Product
+                {
+                    Description = "Douceur et gourmandise pour que vos tartines soient les plus réussies",
+                    Name = "Strawberry Preserves",
+                    ProductType = ConservesType,
+                    Reviews = new List<Review> { fraisesReview }
+                };
 
- context.Products.Add(dillPickles);
- context.Products.Add(dillPickles2);
- context.Products.Add(pickledBeet);
- context.Products.Add(strawberryPreserves);
+                context.Products.Add(Cornichons);
+                context.Products.Add(betteraves);
+                context.Products.Add(strawberryPreserves);
 
- context.SaveChanges();
+                context.SaveChanges();
             }
         }
     }

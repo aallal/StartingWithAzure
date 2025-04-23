@@ -1,6 +1,9 @@
-
+@using Azure.Storage.Blobs
+@using Azure.Storage.Blobs.Models
 @inject ReviewService reviewService
+@inject BlobServiceClient blobServiceClient
 @inject IJSRuntime JS
+@inject IConfiguration config
 
 <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-hidden="true" aria-modal="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -15,6 +18,15 @@
                 <textarea class="form-control" rows="10" 
                     placeholder="Leave us a review, we'll ❤️ it and we'll ❤️ you!"
                     @bind="reviewText"/>
+            @if (showUpload)
+            {
+                <InputFile id="hi" OnChange="@LoadFiles" />
+            }        
+            @if (uploadSuccessful)
+            {
+                <p class="bg-sucess">Upload successful!</p>
+            }        
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
@@ -29,15 +41,55 @@
     public Product Product { get; set; } = new();
 
     string reviewText = string.Empty;
-
+    bool showUpload = true;
+    bool uploadSuccessful = false;
+    bool loadedPhoto = false;
+    string loggedInUser = "amen" ; //ce nom sera remplacé par le nom de l'utilisateur connecté
+    string newBlobName = string.Empty;
+    
     async Task SaveReview()
     {
-        await reviewService.AddReview(reviewText, Product.Id);
+        @* var cdn = configuration["Cdn:Endpoint"]; *@
+        var cdn = "https://storageamendev001.blob.core.windows.net" ;
+
+        
+        List<string>? photoUrls = new();
+
+        if (loadedPhoto)
+        {
+            photoUrls.Add($"{cdn}/{loggedInUser}/{newBlobName}");            
+        }
+
+        await reviewService.AddReview(reviewText, photoUrls, Product.Id);
 
         // we'll just assume everything worked out great and close the modal
 
         reviewText = string.Empty;
+        newBlobName = string.Empty;
+        loadedPhoto = false;
+        showUpload = false;
+        uploadSuccessful = false;
+
+        // hacky work around to get the upload to clear file name
+        StateHasChanged();
+        showUpload = true;
+        StateHasChanged();
 
         await JS.InvokeVoidAsync("hideModal", "reviewModal");
     }
+
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        uploadSuccessful = false;
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(loggedInUser);
+        await blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+        newBlobName = $"{Guid.NewGuid().ToString()}.jpg";
+        await blobContainerClient.UploadBlobAsync(newBlobName, e.File.OpenReadStream(maxAllowedSize: 204800));
+ 
+        loadedPhoto = true;
+        uploadSuccessful = true;
+        StateHasChanged(); // Force the component to re-render to show the uploaded image
+      
+    }    
 }

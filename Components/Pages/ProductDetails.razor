@@ -13,12 +13,17 @@ else
          <div class="column">
              <p class="lead">@product?.Description</p>
          </div>
+         <div class="column">
+             <img src="@product?.PhotoUrl" alt="@product?.Name" class="img-fluid" style="height:200px"/>
+         </div>
      </div>
      <div class="row mt-lg-4 bg-light">
          <div class="column">
              <ProductReviews Product="@product"/>
          </div>
      </div>
+
+     
      <div class="row mt-lg-4">
          <div class="column">
              <button class="btn btn-primary" data-bs-toggle="modal" 

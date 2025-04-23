@@ -13,16 +13,23 @@ public class ReviewService
         _context = context;
     }
 
-    public async Task AddReview(string reviewText, int productId)
+    public async Task AddReview(string reviewText, List<string> photoUrls, int productId)
     {
-      try
+        try
         {
+            // create all the photo url object
+            List<ReviewPhoto> photos = new List<ReviewPhoto>();
+			
+			foreach (var photoUrl in photoUrls)
+			{
+				photos.Add(new ReviewPhoto {  PhotoUrl = photoUrl });
+			}
             // Check if the product exists
             Product product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
             if (product is null)
             {
                 //throw new InvalidOperationException("Product not found");
-                return; 
+                return;
             }
             if (product.Reviews is null)
             {
@@ -36,26 +43,37 @@ public class ReviewService
             Review review = new Review
             {
                 Text = reviewText,
-                UserId = "testUser",
+                UserId = "amen",
                 Date = DateTime.Now,
-               // Product = product ?? throw new InvalidOperationException("Product not found"),
+                Photos = photos
+                 // Product = product ?? throw new InvalidOperationException("Product not found"),
             };
 
             product.Reviews.Add(review);
 
-            
+
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error adding review: {ex.Message}");
         }
-       
+
     }
 
     public async Task<IEnumerable<Review>> GetReviewsforProduct(int productId)
     {
         return await _context.Reviews.AsNoTracking()
             .Where(r => r.Product.Id == productId).ToListAsync();
+    }
+    
+    public async Task<Review?> GetReviewById(int reviewId)
+    {
+        return await _context
+            .Reviews
+            .Include(r => r.Product)
+            .Include(r => r.Photos)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == reviewId)!;
     }
 }

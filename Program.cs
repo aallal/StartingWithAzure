@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using MyBlazorApp.Components;
 using MyBlazorApp.Data;
 using MyBlazorApp.DataServices;
@@ -12,18 +13,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Ajout explicite des fichiers de configuration
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+    // .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+     ;
 
 // var connString = builder.Configuration.GetConnectionString("MyConnection");
 // builder.Services.AddSqlite<MyDbContext>(connString);
 
 var sqlConnection = builder.Configuration["ConnectionStrings:Amen:SqlDb"];
-builder.Services.AddSqlServer<MyDbContext>(sqlConnection, options => options.EnableRetryOnFailure());
+var storageConnection = builder.Configuration["ConnectionStrings:Amen:Storage"];
 
+builder.Services.AddSqlServer<MyDbContext>(sqlConnection, options => options.EnableRetryOnFailure());
+builder.Services.AddAzureClients(
+    azureBuilder => azureBuilder
+        .AddBlobServiceClient(storageConnection)
+);
 
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 Console.WriteLine($"Connection String: {sqlConnection}");
-
 
 builder.Services.AddTransient<ProductServices>();
 builder.Services.AddTransient<ReviewService>();
